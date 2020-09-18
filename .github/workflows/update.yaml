@@ -25,9 +25,9 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/checkout@v2
         with:
-          repository: ojdk-qa/corba-top
+          repository: ojdk-qa/jdkforest-corba
           ssh-key: ${{ secrets.JDKFOREST_CORBA_PRIV_KEY }}
-          path: corba-top
+          path: jdkforest-corba
           fetch-depth: '0'
       - uses: actions/checkout@v2
         with:
