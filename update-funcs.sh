@@ -58,11 +58,17 @@ mirror_fetch_upstream() (
 
 # push changes into mirror repo
 mirror_push() (
-    branchRefs=""
+    subrepo="$1"
+    shift
     # replace each arg's value by value:value
     for project_repo in "${@}" ; do
         shift
-        set -- "${@}" "${project_repo}:${project_repo}"
+        if [ "x${subrepo}" = "xnashorn" ] \
+        && printf '%s' "${project_repo}" | grep -q "jdk7" ; then
+            set -- "${@}"
+        else
+            set -- "${@}" "${project_repo}:${project_repo}"
+        fi
     done
     git push origin --tags "${@}" "refs/notes/hg:refs/notes/hg"
 )
@@ -80,7 +86,7 @@ update_forest_mirrors() (
     # todo: tag for automatic release here
     for subrepo in ${forest_subrepos} ; do
         pushd "jdkforest-${subrepo}"
-        mirror_push "${@}"
+        mirror_push "${subrepo}" "${@}"
         popd
         # pack hg data (used by plugin)
         tar -cJf "hg-jdkforest-${subrepo}.tar.xz" -C "jdkforest-${subrepo}/.git" --exclude "hg/hg" hg
@@ -94,7 +100,7 @@ update_jdk_mirror() (
         mirror_init "jdk"
         mirror_fetch_upstream "" "${@}"
         # todo: tag for automatic release here
-        mirror_push "${@}"
+        mirror_push "" "${@}"
     popd
     # pack hg data (used by plugin)
     tar -cJf "hg-jdk.tar.xz" -C "jdk/.git" --exclude "hg/hg" hg
