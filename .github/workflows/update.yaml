@@ -1,0 +1,44 @@
+name: "update"
+
+on:
+  pull_request:
+    branches:
+      - "*"
+  push:
+    branches:
+      - "*"
+
+jobs:
+  update-jdkforests:
+    name: "Update JDK forests"
+    runs-on: "ubuntu-20.04"
+
+    steps:
+      - name: Downgrade git
+        run: |
+          # workaround for:
+          # https://public-inbox.org/git/20200605224342.GF6569@camp.crustytoothpaste.net/t/
+          git --version
+          apt-cache policy git
+          sudo apt-get install --allow-downgrades git=1:2.25.1-1ubuntu3 git-man=1:2.25.1-1ubuntu3
+          git --version
+      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+        with:
+          repository: java-qa/jdkforest-top
+          ssh-key: ${{ secrets.JDKFOREST_TOP_PRIV_KEY }}
+          path: jdkforest-top
+          fetch-depth: '0'
+      - name: Update mirrors
+        run: |
+          set -eux
+          . ./update-funcs.sh
+          setup_git_plugin
+          update_forest_mirrors "jdk8u/jdk8u"
+
+      - uses: eine/tip@master
+        with:
+          tag: hg-files-latest
+          token: ${{ secrets.GITHUB_TOKEN }}
+          files: |
+            hg-jdkforest-top.tar.xz
