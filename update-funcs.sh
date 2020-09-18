@@ -64,7 +64,7 @@ mirror_push() (
         shift
         set -- "${@}" "${project_repo}:${project_repo}"
     done
-    git push --tags "${@}" "refs/notes/hg:refs/notes/hg"
+    git push origin --tags "${@}" "refs/notes/hg:refs/notes/hg"
 )
 
 # update all forest mirror repos
