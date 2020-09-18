@@ -27,7 +27,7 @@ mirror_init() (
     git config user.email ojdk-qa@github.com
     git config remote-hg.track-branches false
     archive_name="hg-${mirror}.tar.xz"
-    archive_url="https://github.com/java-qa/autoupdater/releases/download/hg-files-latest/${archive_name}"
+    archive_url="https://github.com/ojdk-qa/autoupdater/releases/download/hg-files-latest/${archive_name}"
     if ! curl -s -I "${archive_url}" | head -n 1 | grep -q '404 Not Found' ; then
        # fetch notes generated and required by the plugin
        git fetch origin "refs/notes/hg:refs/notes/hg"
