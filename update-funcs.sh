@@ -70,8 +70,7 @@ mirror_push() (
 # update all forest mirror repos
 update_forest_mirrors() (
     check_project_repos "${@}" || return 1
-    #forest_subrepos="corba hotspot jaxp jaxws jdk langtools nashorn top"
-    forest_subrepos="hotspot jdk top"
+    forest_subrepos="corba hotspot jaxp jaxws jdk langtools nashorn top"
     for subrepo in ${forest_subrepos} ; do
         pushd "jdkforest-${subrepo}"
         mirror_init "jdkforest-${subrepo}"

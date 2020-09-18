@@ -83,6 +83,11 @@ jobs:
           tag: hg-files-latest
           token: ${{ secrets.GITHUB_TOKEN }}
           files: |
+            hg-jdkforest-corba.tar.xz
             hg-jdkforest-hotspot.tar.xz
+            hg-jdkforest-jaxp.tar.xz
+            hg-jdkforest-jaxws.tar.xz
             hg-jdkforest-jdk.tar.xz
+            hg-jdkforest-langtools.tar.xz
+            hg-jdkforest-nashorn.tar.xz
             hg-jdkforest-top.tar.xz
