@@ -76,7 +76,7 @@ jobs:
           set -eux
           . ./update-funcs.sh
           setup_git_plugin
-          update_forest_mirrors "jdk7/jdk7" "jdk7u/jdk7u" "jdk7u/jdk7u-dev" "jdk8/jdk8" "jdk8u/jdk8u" "jdk8u/jdk8u-dev" "aarch64-port/jdk8" "aarch64-port/jdk8u" "shenandoah/jdk8"
+          update_forest_mirrors "jdk7/jdk7" "jdk7u/jdk7u" "jdk7u/jdk7u-dev" "jdk8/jdk8" "jdk8u/jdk8u" "jdk8u/jdk8u-dev" "aarch64-port/jdk8" "aarch64-port/jdk8u" "shenandoah/jdk8" "aarch64-port/jdk8u-shenandoah"
 
       - uses: eine/tip@master
         with:
