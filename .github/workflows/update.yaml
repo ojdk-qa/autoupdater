@@ -34,7 +34,7 @@ jobs:
           set -eux
           . ./update-funcs.sh
           setup_git_plugin
-          update_forest_mirrors "jdk8u/jdk8u"
+          update_forest_mirrors "jdk8u/jdk8u" "jdk8u/jdk8u-dev"
 
       - uses: eine/tip@master
         with:
