@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/checkout@v2
         with:
-          repository: java-qa/jdkforest-top
+          repository: ojdk-qa/jdkforest-top
           ssh-key: ${{ secrets.JDKFOREST_TOP_PRIV_KEY }}
           path: jdkforest-top
           fetch-depth: '0'
