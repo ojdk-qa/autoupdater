@@ -71,7 +71,7 @@ mirror_push() (
 update_forest_mirrors() (
     check_project_repos "${@}" || return 1
     #forest_subrepos="corba hotspot jaxp jaxws jdk langtools nashorn top"
-    forest_subrepos="top"
+    forest_subrepos="jdk top"
     for subrepo in ${forest_subrepos} ; do
         pushd "jdkforest-${subrepo}"
         mirror_init "jdkforest-${subrepo}"
