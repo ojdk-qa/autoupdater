@@ -121,7 +121,7 @@ jobs:
           set -eux
           . ./update-funcs.sh
           setup_git_plugin
-          update_jdk_mirror "jdk/jdk11" "jdk-updates/jdk11u"
+          update_jdk_mirror "jdk/jdk11" "jdk-updates/jdk11u" "jdk-updates/jdk11u-dev"
       - uses: eine/tip@master
         with:
           tag: hg-files-latest
