@@ -96,12 +96,12 @@ update_forest_mirrors() (
 # update jdk mirror repo
 update_jdk_mirror() (
     check_project_repos "${@}" || return 1
-    pushd "jdk"
-        mirror_init "jdk"
+    pushd "hg-jdk"
+        mirror_init "hg-jdk"
         mirror_fetch_upstream "" "${@}"
         # todo: tag for automatic release here
         mirror_push "" "${@}"
     popd
     # pack hg data (used by plugin)
-    tar -cJf "hg-jdk.tar.xz" -C "jdk/.git" --exclude "hg/hg" hg
+    tar -cJf "hg-hg-jdk.tar.xz" -C "jdk/.git" --exclude "hg/hg" hg
 )
