@@ -103,7 +103,7 @@ update_jdk_mirror() (
         mirror_push "" "${@}"
     popd
     # pack hg data (used by plugin)
-    tar -cJf "hg-hg-jdk.tar.xz" -C "jdk/.git" --exclude "hg/hg" hg
+    tar -cJf "hg-hg-jdk.tar.xz" -C "hg-jdk/.git" --exclude "hg/hg" hg
 )
 
 # update git-jdk mirror repo
