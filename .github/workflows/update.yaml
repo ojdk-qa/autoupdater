@@ -99,6 +99,7 @@ jobs:
   update-hg-jdk:
     name: "Update mercurial JDK mirror"
     runs-on: "ubuntu-20.04"
+    if: false
     steps:
       - name: Downgrade git
         run: |
@@ -132,7 +133,6 @@ jobs:
   update-git-jdk:
     name: "Update git JDK mirror"
     runs-on: "ubuntu-latest"
-    if: false
     steps:
       - uses: actions/checkout@v2
       - name: Checkout git-jdk mirror
