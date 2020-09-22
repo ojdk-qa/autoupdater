@@ -9,7 +9,7 @@ jobs:
   update-jdkforests:
     name: "Update JDK forests"
     runs-on: "ubuntu-20.04"
-
+    if: false
     steps:
       - name: Downgrade git
         run: |
@@ -95,3 +95,35 @@ jobs:
             hg-jdkforest-langtools.tar.xz
             hg-jdkforest-nashorn.tar.xz
             hg-jdkforest-top.tar.xz
+
+  update-hg-jdk:
+    name: "Update mercurial JDK mirror"
+    runs-on: "ubuntu-20.04"
+    steps:
+      - name: Downgrade git
+        run: |
+          # workaround for:
+          # https://public-inbox.org/git/20200605224342.GF6569@camp.crustytoothpaste.net/t/
+          git --version
+          apt-cache policy git
+          sudo apt-get install --allow-downgrades git=1:2.25.1-1ubuntu3 git-man=1:2.25.1-1ubuntu3
+          git --version
+      - name: Checkout hg-jdk mirror
+        uses: actions/checkout@v2
+        with:
+          repository: ojdk-qa/hg-jdk
+          ssh-key: ${{ secrets.HG_JDK_PRIV_KEY }}
+          path: hg-jdk
+          fetch-depth: '0'
+      - name: Update mirror
+        run: |
+          set -eux
+          . ./update-funcs.sh
+          setup_git_plugin
+          update_jdk_mirror "jdk/jdk11"
+      - uses: eine/tip@master
+        with:
+          tag: hg-files-latest
+          token: ${{ secrets.GITHUB_TOKEN }}
+          files: |
+            hg-hg-jdk.tar.xz
