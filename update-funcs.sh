@@ -93,7 +93,7 @@ update_forest_mirrors() (
     done
 )
 
-# update jdk mirror repo
+# update hg-jdk mirror repo
 update_jdk_mirror() (
     check_project_repos "${@}" || return 1
     pushd "hg-jdk"
@@ -104,4 +104,22 @@ update_jdk_mirror() (
     popd
     # pack hg data (used by plugin)
     tar -cJf "hg-hg-jdk.tar.xz" -C "jdk/.git" --exclude "hg/hg" hg
+)
+
+# update git-jdk mirror repo
+update_git_jdk_mirror() (
+    pushd "git-jdk"
+        git config user.name ojdk-qa
+        git config user.email ojdk-qa@github.com
+        for project_repo in "${@}" ; do
+            git fetch "https://github.com/openjdk/${project_repo}" "master:${project_repo}"
+        done
+        # todo: tag for automatic release here
+        # replace each arg's value by value:value
+        for project_repo in "${@}" ; do
+            shift
+            set -- "${@}" "${project_repo}:${project_repo}"
+        done
+        git push origin --tags "${@}"
+    popd
 )

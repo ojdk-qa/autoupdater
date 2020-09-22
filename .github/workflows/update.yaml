@@ -128,3 +128,21 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           files: |
             hg-hg-jdk.tar.xz
+
+  update-git-jdk:
+    name: "Update git JDK mirror"
+    runs-on: "ubuntu-latest"
+    if: false
+    steps:
+      - uses: actions/checkout@v2
+      - name: Checkout git-jdk mirror
+        uses: actions/checkout@v2
+        with:
+          repository: ojdk-qa/git-jdk
+          ssh-key: ${{ secrets.GIT_JDK_PRIV_KEY }}
+          path: git-jdk
+      - name: Update mirror
+        run: |
+          set -eux
+          . ./update-funcs.sh
+          update_git_jdk_mirror "jdk"
