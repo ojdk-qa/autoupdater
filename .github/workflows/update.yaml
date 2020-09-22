@@ -20,49 +20,57 @@ jobs:
           sudo apt-get install --allow-downgrades git=1:2.25.1-1ubuntu3 git-man=1:2.25.1-1ubuntu3
           git --version
       - uses: actions/checkout@v2
-      - uses: actions/checkout@v2
+      - name: Checkout jdkforest-corba mirror
+        uses: actions/checkout@v2
         with:
           repository: ojdk-qa/jdkforest-corba
           ssh-key: ${{ secrets.JDKFOREST_CORBA_PRIV_KEY }}
           path: jdkforest-corba
           fetch-depth: '0'
-      - uses: actions/checkout@v2
+      - name: Checkout jdkforest-hotspot mirror
+        uses: actions/checkout@v2
         with:
           repository: ojdk-qa/jdkforest-hotspot
           ssh-key: ${{ secrets.JDKFOREST_HOTSPOT_PRIV_KEY }}
           path: jdkforest-hotspot
           fetch-depth: '0'
-      - uses: actions/checkout@v2
+      - name: Checkout jdkforest-jaxp mirror
+        uses: actions/checkout@v2
         with:
           repository: ojdk-qa/jdkforest-jaxp
           ssh-key: ${{ secrets.JDKFOREST_JAXP_PRIV_KEY }}
           path: jdkforest-jaxp
           fetch-depth: '0'
-      - uses: actions/checkout@v2
+      - name: Checkout jdkforest-jaxws mirror
+        uses: actions/checkout@v2
         with:
           repository: ojdk-qa/jdkforest-jaxws
           ssh-key: ${{ secrets.JDKFOREST_JAXWS_PRIV_KEY }}
           path: jdkforest-jaxws
           fetch-depth: '0'
-      - uses: actions/checkout@v2
+      - name: Checkout jdkforest-jdk mirror
+        uses: actions/checkout@v2
         with:
           repository: ojdk-qa/jdkforest-jdk
           ssh-key: ${{ secrets.JDKFOREST_JDK_PRIV_KEY }}
           path: jdkforest-jdk
           fetch-depth: '0'
-      - uses: actions/checkout@v2
+      - name: Checkout jdkforest-langtools mirror
+        uses: actions/checkout@v2
         with:
           repository: ojdk-qa/jdkforest-langtools
           ssh-key: ${{ secrets.JDKFOREST_LANGTOOLS_PRIV_KEY }}
           path: jdkforest-langtools
           fetch-depth: '0'
-      - uses: actions/checkout@v2
+      - name: Checkout jdkforest-nashorn mirror
+        uses: actions/checkout@v2
         with:
           repository: ojdk-qa/jdkforest-nashorn
           ssh-key: ${{ secrets.JDKFOREST_NASHORN_PRIV_KEY }}
           path: jdkforest-nashorn
           fetch-depth: '0'
-      - uses: actions/checkout@v2
+      - name: Checkout jdkforest-top mirror
+        uses: actions/checkout@v2
         with:
           repository: ojdk-qa/jdkforest-top
           ssh-key: ${{ secrets.JDKFOREST_TOP_PRIV_KEY }}
