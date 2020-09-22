@@ -6,10 +6,22 @@ on:
       - "*"
 
 jobs:
+  single-instance:
+    name: "Run single instance only"
+    runs-on: "ubuntu-latest"
+    timeout-minutes: 1
+    steps:
+      - name: 'Block Concurrent Executions'
+        uses: softprops/turnstyle@v1
+        with:
+          poll-interval-seconds: 10
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   update-jdkforests:
     name: "Update JDK forests"
     runs-on: "ubuntu-20.04"
-    if: false
+    needs: single-instance
     steps:
       - name: Downgrade git
         run: |
@@ -99,7 +111,7 @@ jobs:
   update-hg-jdk:
     name: "Update mercurial JDK mirror"
     runs-on: "ubuntu-20.04"
-    if: false
+    needs: single-instance
     steps:
       - name: Downgrade git
         run: |
@@ -122,7 +134,7 @@ jobs:
           set -eux
           . ./update-funcs.sh
           setup_git_plugin
-          update_jdk_mirror "jdk/jdk11" "jdk-updates/jdk11u" "jdk-updates/jdk11u-dev"
+          update_jdk_mirror "jdk/jdk11" "jdk-updates/jdk11u" "jdk-updates/jdk11u-dev" "shenandoah/jdk11"
       - uses: eine/tip@master
         with:
           tag: hg-files-latest
@@ -133,6 +145,7 @@ jobs:
   update-git-jdk:
     name: "Update git JDK mirror"
     runs-on: "ubuntu-latest"
+    needs: single-instance
     steps:
       - uses: actions/checkout@v2
       - name: Checkout git-jdk mirror
