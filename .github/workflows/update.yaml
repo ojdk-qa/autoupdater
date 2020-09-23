@@ -83,12 +83,12 @@ jobs:
           ssh-key: ${{ secrets.JDKFOREST_NASHORN_PRIV_KEY }}
           path: jdkforest-nashorn
           fetch-depth: '0'
-      - name: Checkout jdkforest-top mirror
+      - name: Checkout jdkforest-root mirror
         uses: actions/checkout@v2
         with:
-          repository: ojdk-qa/jdkforest-top
-          ssh-key: ${{ secrets.JDKFOREST_TOP_PRIV_KEY }}
-          path: jdkforest-top
+          repository: ojdk-qa/jdkforest-root
+          ssh-key: ${{ secrets.JDKFOREST_ROOT_PRIV_KEY }}
+          path: jdkforest-root
           fetch-depth: '0'
       - name: Update mirrors
         run: |
@@ -108,7 +108,7 @@ jobs:
             hg-jdkforest-jdk.tar.xz
             hg-jdkforest-langtools.tar.xz
             hg-jdkforest-nashorn.tar.xz
-            hg-jdkforest-top.tar.xz
+            hg-jdkforest-root.tar.xz
 
   update-hg-jdk:
     name: "Update mercurial JDK mirror"

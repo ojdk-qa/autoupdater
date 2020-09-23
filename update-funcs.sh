@@ -48,7 +48,7 @@ mirror_fetch_upstream() (
     subrepo="$1"
     shift
     repoSuffix=""
-    if [ -n "${subrepo}" ] && ! [ "x${subrepo}" = "xtop" ] ; then
+    if [ -n "${subrepo}" ] && ! [ "x${subrepo}" = "xroot" ] ; then
        repoSuffix="/${subrepo}"
     fi
     for project_repo in "${@}" ; do
@@ -81,7 +81,7 @@ mirror_push() (
 # update all forest mirror repos
 update_forest_mirrors() (
     check_project_repos "${@}" || return 1
-    forest_subrepos="corba hotspot jaxp jaxws jdk langtools nashorn top"
+    forest_subrepos="corba hotspot jaxp jaxws jdk langtools nashorn root"
     for subrepo in ${forest_subrepos} ; do
         pushd "jdkforest-${subrepo}"
         mirror_init "jdkforest-${subrepo}"
