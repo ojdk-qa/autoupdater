@@ -137,7 +137,37 @@ jobs:
           . ./update-funcs.sh
           setup_git_plugin
           update_jdk_mirror "jdk/jdk11" "jdk-updates/jdk11u" "jdk-updates/jdk11u-dev" "shenandoah/jdk11"
-      - uses: eine/tip@master
+      - name: Save hg assets
+        uses: eine/tip@master
+        timeout-minutes: 30
+        with:
+          tag: hg-files-latest
+          token: ${{ secrets.GITHUB_TOKEN }}
+          files: |
+            hg-hg-jdk.tar.xz
+      # workaround: upload sometimes hangs, if so try second attempt
+      - name: Check failures
+        if: ${{ failure() }}
+        run: |
+          tmp_archive_url="https://github.com/ojdk-qa/autoupdater/releases/download/hg-files-latest/tmp.hg-hg-jdk.tar.xz"
+          if [ -e hg-hg-jdk.tar.xz ] ; then
+              if xz -t hg-hg-jdk.tar.xz ; then
+                  echo "REUPLOAD_ASSETS=1" >> $GITHUB_ENV
+              fi
+              if ! curl -s -I "${tmp_archive_url}" | head -n 1 | grep -q '404 Not Found' ; then
+                  echo "REMOVE_TMP_ASSET=1" >> $GITHUB_ENV
+              fi
+          fi
+      - name: Remove failed tmp asset
+        if: ${{ failure() && env.REMOVE_TMP_ASSET == '1' }}
+        uses: mknejp/delete-release-assets@v1
+          tag: hg-files-latest
+          token: ${{ secrets.GITHUB_TOKEN }}
+          assets: hg-hg-jdk.tar.xz
+      - name: Reupload hg assets
+        if: ${{ failure() && env.REUPLOAD_ASSETS == '1' }}
+        uses: eine/tip@master
+        timeout-minutes: 30
         with:
           tag: hg-files-latest
           token: ${{ secrets.GITHUB_TOKEN }}
