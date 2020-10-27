@@ -161,6 +161,7 @@ jobs:
       - name: Remove failed tmp asset
         if: ${{ failure() && env.REMOVE_TMP_ASSET == '1' }}
         uses: mknejp/delete-release-assets@v1
+        with:
           tag: hg-files-latest
           token: ${{ secrets.GITHUB_TOKEN }}
           assets: hg-hg-jdk.tar.xz
