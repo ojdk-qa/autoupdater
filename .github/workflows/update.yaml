@@ -139,7 +139,7 @@ jobs:
           update_jdk_mirror "jdk/jdk11" "jdk-updates/jdk11u" "jdk-updates/jdk11u-dev" "shenandoah/jdk11"
       - name: Save hg assets
         uses: eine/tip@master
-        timeout-minutes: 30
+        timeout-minutes: 20
         with:
           tag: hg-files-latest
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -164,11 +164,11 @@ jobs:
         with:
           tag: hg-files-latest
           token: ${{ secrets.GITHUB_TOKEN }}
-          assets: hg-hg-jdk.tar.xz
+          assets: tmp.hg-hg-jdk.tar.xz
       - name: Reupload hg assets
         if: ${{ failure() && env.REUPLOAD_ASSETS == '1' }}
         uses: eine/tip@master
-        timeout-minutes: 30
+        timeout-minutes: 20
         with:
           tag: hg-files-latest
           token: ${{ secrets.GITHUB_TOKEN }}
