@@ -109,7 +109,7 @@ jobs:
       - name: Pack hg files
         env:
           HG_HASH_NEW: ${{ hashFiles('*/.git/hg/marks*') }}
-        run:
+        run: |
           set -eux
           if ! [ "${HG_HASH_OLD}" = "${HG_HASH_NEW}" ] ; then
               . ./update-funcs.sh
@@ -172,7 +172,7 @@ jobs:
       - name: Pack hg files
         env:
           HG_HASH_NEW: ${{ hashFiles('*/.git/hg/marks*') }}
-        run:
+        run: |
           set -eux
           if ! [ "${HG_HASH_OLD}" = "${HG_HASH_NEW}" ] ; then
               . ./update-funcs.sh
