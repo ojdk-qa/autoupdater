@@ -78,13 +78,22 @@ mirror_push() (
     git push origin --tags "${@}" "refs/notes/hg:refs/notes/hg"
 )
 
+# init all forest mirror repos
+init_forest_mirrors() (
+    forest_subrepos="corba hotspot jaxp jaxws jdk langtools nashorn root"
+    for subrepo in ${forest_subrepos} ; do
+        pushd "jdkforest-${subrepo}"
+        mirror_init "jdkforest-${subrepo}"
+        popd
+    done
+)
+
 # update all forest mirror repos
 update_forest_mirrors() (
     check_project_repos "${@}" || return 1
     forest_subrepos="corba hotspot jaxp jaxws jdk langtools nashorn root"
     for subrepo in ${forest_subrepos} ; do
         pushd "jdkforest-${subrepo}"
-        mirror_init "jdkforest-${subrepo}"
         mirror_fetch_upstream "${subrepo}" "${@}"
         popd
     done
@@ -93,20 +102,37 @@ update_forest_mirrors() (
         pushd "jdkforest-${subrepo}"
         mirror_push "${subrepo}" "${@}"
         popd
+    done
+)
+
+# pack hg data for all forest mirror repos
+pack_hg_forest_mirrors() (
+    forest_subrepos="corba hotspot jaxp jaxws jdk langtools nashorn root"
+    for subrepo in ${forest_subrepos} ; do
         # pack hg data (used by plugin)
         tar -cJf "hg-jdkforest-${subrepo}.tar.xz" -C "jdkforest-${subrepo}/.git" --exclude "hg/hg" hg
     done
+)
+
+# init hg-jdk mirror repo
+init_jdk_mirror() (
+    pushd "hg-jdk"
+        mirror_init "hg-jdk"
+    popd
 )
 
 # update hg-jdk mirror repo
 update_jdk_mirror() (
     check_project_repos "${@}" || return 1
     pushd "hg-jdk"
-        mirror_init "hg-jdk"
         mirror_fetch_upstream "" "${@}"
         # todo: tag for automatic release here
         mirror_push "" "${@}"
     popd
+)
+
+# pack hg data for hg-jdk mirror repo
+pack_hg_jdk_mirror() (
     # pack hg data (used by plugin)
     tar -cJf "hg-hg-jdk.tar.xz" -C "hg-jdk/.git" --exclude "hg/hg" hg
 )

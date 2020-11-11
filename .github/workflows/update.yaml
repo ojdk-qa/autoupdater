@@ -90,13 +90,35 @@ jobs:
           ssh-key: ${{ secrets.JDKFOREST_ROOT_PRIV_KEY }}
           path: jdkforest-root
           fetch-depth: '0'
-      - name: Update mirrors
+      - name: Init mirrors
         run: |
           set -eux
           . ./update-funcs.sh
+          init_forest_mirrors
+      - name: Update mirrors
+        env:
+          HG_HASH_OLD: ${{ hashFiles('*/.git/hg/marks*') }}
+        run: |
+          set -eux
+          # save original hg hash for subsequent steps
+          echo "HG_HASH_OLD=${HG_HASH_OLD}" >> $GITHUB_ENV
+          # update mirrors
+          . ./update-funcs.sh
           setup_git_plugin
           update_forest_mirrors "jdk7/jdk7" "jdk7u/jdk7u" "jdk7u/jdk7u-dev" "jdk8/jdk8" "jdk8u/jdk8u" "jdk8u/jdk8u-dev" "aarch64-port/jdk8" "aarch64-port/jdk8u" "shenandoah/jdk8" "aarch64-port/jdk8u-shenandoah" "aarch32-port/jdk8u"
-      - uses: eine/tip@master
+      - name: Pack hg files
+        env:
+          HG_HASH_NEW: ${{ hashFiles('*/.git/hg/marks*') }}
+        run:
+          set -eux
+          if ! [ "${HG_HASH_OLD}" = "${HG_HASH_NEW}" ] ; then
+              . ./update-funcs.sh
+              pack_hg_forest_mirrors
+              echo "HG_ARCHIVES=1" >> $GITHUB_ENV
+          fi
+      - name: Upload hg files
+        uses: eine/tip@master
+        if: ${{ env.HG_ARCHIVES == '1' }}
         with:
           tag: hg-files-latest
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -131,15 +153,36 @@ jobs:
           ssh-key: ${{ secrets.HG_JDK_PRIV_KEY }}
           path: hg-jdk
           fetch-depth: '0'
-      - name: Update mirror
+      - name: Init mirrors
         run: |
           set -eux
           . ./update-funcs.sh
+          init_jdk_mirror
+      - name: Update mirror
+        env:
+          HG_HASH_OLD: ${{ hashFiles('*/.git/hg/marks*') }}
+        run: |
+          set -eux
+          # save original hg hash for subsequent steps
+          echo "HG_HASH_OLD=${HG_HASH_OLD}" >> $GITHUB_ENV
+          # update mirror
+          . ./update-funcs.sh
           setup_git_plugin
           update_jdk_mirror "jdk/jdk11" "jdk-updates/jdk11u" "jdk-updates/jdk11u-dev" "shenandoah/jdk11"
+      - name: Pack hg files
+        env:
+          HG_HASH_NEW: ${{ hashFiles('*/.git/hg/marks*') }}
+        run:
+          set -eux
+          if ! [ "${HG_HASH_OLD}" = "${HG_HASH_NEW}" ] ; then
+              . ./update-funcs.sh
+              pack_hg_jdk_mirror
+              echo "HG_ARCHIVES=1" >> $GITHUB_ENV
+          fi
       - name: Save hg assets
+        if: ${{ env.HG_ARCHIVES == '1' }}
         uses: eine/tip@master
-        timeout-minutes: 20
+        timeout-minutes: 15
         with:
           tag: hg-files-latest
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -147,16 +190,12 @@ jobs:
             hg-hg-jdk.tar.xz
       # workaround: upload sometimes hangs, if so try second attempt
       - name: Check failures
-        if: ${{ failure() }}
+        if: ${{ failure() && env.HG_ARCHIVES == '1' }}
         run: |
           tmp_archive_url="https://github.com/ojdk-qa/autoupdater/releases/download/hg-files-latest/tmp.hg-hg-jdk.tar.xz"
-          if [ -e hg-hg-jdk.tar.xz ] ; then
-              if xz -t hg-hg-jdk.tar.xz ; then
-                  echo "REUPLOAD_ASSETS=1" >> $GITHUB_ENV
-              fi
-              if ! curl -s -I "${tmp_archive_url}" | head -n 1 | grep -q '404 Not Found' ; then
-                  echo "REMOVE_TMP_ASSET=1" >> $GITHUB_ENV
-              fi
+          echo "REUPLOAD_ASSETS=1" >> $GITHUB_ENV
+          if ! curl -s -I "${tmp_archive_url}" | head -n 1 | grep -q '404 Not Found' ; then
+              echo "REMOVE_TMP_ASSET=1" >> $GITHUB_ENV
           fi
       - name: Remove failed tmp asset
         if: ${{ failure() && env.REMOVE_TMP_ASSET == '1' }}
@@ -168,7 +207,35 @@ jobs:
       - name: Reupload hg assets
         if: ${{ failure() && env.REUPLOAD_ASSETS == '1' }}
         uses: eine/tip@master
-        timeout-minutes: 20
+        timeout-minutes: 15
+        with:
+          tag: hg-files-latest
+          token: ${{ secrets.GITHUB_TOKEN }}
+          files: |
+            hg-hg-jdk.tar.xz
+      # workaround: upload sometimes hangs, if so try another attempt
+      - name: Check failures 2
+        if: ${{ failure() && env.REUPLOAD_ASSETS == '1' }}
+        run: |
+          tmp_archive_url="https://github.com/ojdk-qa/autoupdater/releases/download/hg-files-latest/tmp.hg-hg-jdk.tar.xz"
+          if ! curl -s -I "${tmp_archive_url}" | head -n 1 | grep -q '404 Not Found' ; then
+              echo "REMOVE_TMP_ASSET=1" >> $GITHUB_ENV
+              echo "REUPLOAD_ASSETS=1" >> $GITHUB_ENV
+          else
+              echo "REMOVE_TMP_ASSET=0" >> $GITHUB_ENV
+              echo "REUPLOAD_ASSETS=0" >> $GITHUB_ENV
+          fi
+      - name: Remove failed tmp asset 2
+        if: ${{ failure() && env.REMOVE_TMP_ASSET == '1' }}
+        uses: mknejp/delete-release-assets@v1
+        with:
+          tag: hg-files-latest
+          token: ${{ secrets.GITHUB_TOKEN }}
+          assets: tmp.hg-hg-jdk.tar.xz
+      - name: Reupload hg assets 2
+        if: ${{ failure() && env.REUPLOAD_ASSETS == '1' }}
+        uses: eine/tip@master
+        timeout-minutes: 15
         with:
           tag: hg-files-latest
           token: ${{ secrets.GITHUB_TOKEN }}
