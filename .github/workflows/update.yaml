@@ -91,32 +91,21 @@ jobs:
           ssh-key: ${{ secrets.JDKFOREST_ROOT_PRIV_KEY }}
           path: jdkforest-root
           fetch-depth: '0'
-      - name: Init mirrors
-        run: |
-          set -eux
-          . ./update-funcs.sh
-          init_forest_mirrors
       - name: Update mirrors
-        env:
-          HG_HASH_OLD: ${{ hashFiles('*/.git/hg/marks*') }}
         run: |
           set -eux
-          # save original hg hash for subsequent steps
-          echo "HG_HASH_OLD=${HG_HASH_OLD}" >> $GITHUB_ENV
-          # update mirrors
           . ./update-funcs.sh
           setup_git_plugin
+          init_forest_mirrors
+          export GH_CHANGES_ENV="MIRROR_CHANGES"
           update_forest_mirrors "jdk7/jdk7" "jdk7u/jdk7u" "jdk7u/jdk7u-dev" "jdk8/jdk8" "jdk8u/jdk8u" "jdk8u/jdk8u-dev" "aarch64-port/jdk8" "aarch64-port/jdk8u" "shenandoah/jdk8" "aarch64-port/jdk8u-shenandoah" "aarch32-port/jdk8u"
       - name: Pack hg files
-        env:
-          HG_HASH_NEW: ${{ hashFiles('*/.git/hg/marks*') }}
+        if: ${{ env.MIRROR_CHANGES == '1' }}
         run: |
           set -eux
-          if ! [ "${HG_HASH_OLD}" = "${HG_HASH_NEW}" ] ; then
-              . ./update-funcs.sh
-              pack_hg_forest_mirrors
-              echo "HG_ARCHIVES=1" >> $GITHUB_ENV
-          fi
+          . ./update-funcs.sh
+          pack_hg_forest_mirrors
+          echo "HG_ARCHIVES=1" >> $GITHUB_ENV
       - name: Upload hg files
         uses: eine/tip@master
         if: ${{ env.HG_ARCHIVES == '1' }}
@@ -154,32 +143,21 @@ jobs:
           ssh-key: ${{ secrets.HG_JDK_PRIV_KEY }}
           path: hg-jdk
           fetch-depth: '0'
-      - name: Init mirrors
-        run: |
-          set -eux
-          . ./update-funcs.sh
-          init_jdk_mirror
       - name: Update mirror
-        env:
-          HG_HASH_OLD: ${{ hashFiles('*/.git/hg/marks*') }}
         run: |
           set -eux
-          # save original hg hash for subsequent steps
-          echo "HG_HASH_OLD=${HG_HASH_OLD}" >> $GITHUB_ENV
-          # update mirror
           . ./update-funcs.sh
           setup_git_plugin
+          init_jdk_mirror
+          export GH_CHANGES_ENV="MIRROR_CHANGES"
           update_jdk_mirror "jdk/jdk11" "jdk-updates/jdk11u" "jdk-updates/jdk11u-dev" "shenandoah/jdk11"
       - name: Pack hg files
-        env:
-          HG_HASH_NEW: ${{ hashFiles('*/.git/hg/marks*') }}
+        if: ${{ env.MIRROR_CHANGES == '1' }}
         run: |
           set -eux
-          if ! [ "${HG_HASH_OLD}" = "${HG_HASH_NEW}" ] ; then
-              . ./update-funcs.sh
-              pack_hg_jdk_mirror
-              echo "HG_ARCHIVES=1" >> $GITHUB_ENV
-          fi
+          . ./update-funcs.sh
+          pack_hg_jdk_mirror
+          echo "HG_ARCHIVES=1" >> $GITHUB_ENV
       - name: Save hg assets
         if: ${{ env.HG_ARCHIVES == '1' }}
         uses: eine/tip@master
