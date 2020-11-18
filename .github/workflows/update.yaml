@@ -171,9 +171,10 @@ jobs:
       - name: Check failures
         if: ${{ failure() && env.HG_ARCHIVES == '1' }}
         run: |
+          sleep 5
           tmp_archive_url="https://github.com/ojdk-qa/autoupdater/releases/download/hg-files-latest/tmp.hg-hg-jdk.tar.xz"
           echo "REUPLOAD_ASSETS=1" >> $GITHUB_ENV
-          if ! curl -s -I "${tmp_archive_url}" | head -n 1 | grep -q '404 Not Found' ; then
+          if ! curl -s -I -H "Cache-Control: no-cache" "${tmp_archive_url}?_=$(date +%s)" | head -n 1 | grep -q '404 Not Found' ; then
               echo "REMOVE_TMP_ASSET=1" >> $GITHUB_ENV
           fi
       - name: Remove failed tmp asset
@@ -196,8 +197,9 @@ jobs:
       - name: Check failures 2
         if: ${{ failure() && env.REUPLOAD_ASSETS == '1' }}
         run: |
+          sleep 5
           tmp_archive_url="https://github.com/ojdk-qa/autoupdater/releases/download/hg-files-latest/tmp.hg-hg-jdk.tar.xz"
-          if ! curl -s -I "${tmp_archive_url}" | head -n 1 | grep -q '404 Not Found' ; then
+          if ! curl -s -I -H "Cache-Control: no-cache" "${tmp_archive_url}?_=$(date +%s)" | head -n 1 | grep -q '404 Not Found' ; then
               echo "REMOVE_TMP_ASSET_2=1" >> $GITHUB_ENV
               echo "REUPLOAD_ASSETS_2=1" >> $GITHUB_ENV
           fi
@@ -221,8 +223,9 @@ jobs:
       - name: Check failures 3
         if: ${{ failure() && env.REUPLOAD_ASSETS_2 == '1' }}
         run: |
+          sleep 5
           tmp_archive_url="https://github.com/ojdk-qa/autoupdater/releases/download/hg-files-latest/tmp.hg-hg-jdk.tar.xz"
-          if ! curl -s -I "${tmp_archive_url}" | head -n 1 | grep -q '404 Not Found' ; then
+          if ! curl -s -I -H "Cache-Control: no-cache" "${tmp_archive_url}?_=$(date +%s)" | head -n 1 | grep -q '404 Not Found' ; then
               echo "REMOVE_TMP_ASSET_3=1" >> $GITHUB_ENV
               echo "REUPLOAD_ASSETS_3=1" >> $GITHUB_ENV
           fi
