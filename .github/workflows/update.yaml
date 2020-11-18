@@ -198,21 +198,18 @@ jobs:
         run: |
           tmp_archive_url="https://github.com/ojdk-qa/autoupdater/releases/download/hg-files-latest/tmp.hg-hg-jdk.tar.xz"
           if ! curl -s -I "${tmp_archive_url}" | head -n 1 | grep -q '404 Not Found' ; then
-              echo "REMOVE_TMP_ASSET=1" >> $GITHUB_ENV
-              echo "REUPLOAD_ASSETS=1" >> $GITHUB_ENV
-          else
-              echo "REMOVE_TMP_ASSET=0" >> $GITHUB_ENV
-              echo "REUPLOAD_ASSETS=0" >> $GITHUB_ENV
+              echo "REMOVE_TMP_ASSET_2=1" >> $GITHUB_ENV
+              echo "REUPLOAD_ASSETS_2=1" >> $GITHUB_ENV
           fi
       - name: Remove failed tmp asset 2
-        if: ${{ failure() && env.REMOVE_TMP_ASSET == '1' }}
+        if: ${{ failure() && env.REMOVE_TMP_ASSET_2 == '1' }}
         uses: mknejp/delete-release-assets@v1
         with:
           tag: hg-files-latest
           token: ${{ secrets.GITHUB_TOKEN }}
           assets: tmp.hg-hg-jdk.tar.xz
       - name: Reupload hg assets 2
-        if: ${{ failure() && env.REUPLOAD_ASSETS == '1' }}
+        if: ${{ failure() && env.REUPLOAD_ASSETS_2 == '1' }}
         uses: eine/tip@master
         timeout-minutes: 15
         with:
@@ -222,25 +219,22 @@ jobs:
             hg-hg-jdk.tar.xz
       # workaround: upload sometimes hangs, if so try another attempt
       - name: Check failures 3
-        if: ${{ failure() && env.REUPLOAD_ASSETS == '1' }}
+        if: ${{ failure() && env.REUPLOAD_ASSETS_2 == '1' }}
         run: |
           tmp_archive_url="https://github.com/ojdk-qa/autoupdater/releases/download/hg-files-latest/tmp.hg-hg-jdk.tar.xz"
           if ! curl -s -I "${tmp_archive_url}" | head -n 1 | grep -q '404 Not Found' ; then
-              echo "REMOVE_TMP_ASSET=1" >> $GITHUB_ENV
-              echo "REUPLOAD_ASSETS=1" >> $GITHUB_ENV
-          else
-              echo "REMOVE_TMP_ASSET=0" >> $GITHUB_ENV
-              echo "REUPLOAD_ASSETS=0" >> $GITHUB_ENV
+              echo "REMOVE_TMP_ASSET_3=1" >> $GITHUB_ENV
+              echo "REUPLOAD_ASSETS_3=1" >> $GITHUB_ENV
           fi
       - name: Remove failed tmp asset 3
-        if: ${{ failure() && env.REMOVE_TMP_ASSET == '1' }}
+        if: ${{ failure() && env.REMOVE_TMP_ASSET_3 == '1' }}
         uses: mknejp/delete-release-assets@v1
         with:
           tag: hg-files-latest
           token: ${{ secrets.GITHUB_TOKEN }}
           assets: tmp.hg-hg-jdk.tar.xz
       - name: Reupload hg assets 3
-        if: ${{ failure() && env.REUPLOAD_ASSETS == '1' }}
+        if: ${{ failure() && env.REUPLOAD_ASSETS_3 == '1' }}
         uses: eine/tip@master
         timeout-minutes: 15
         with:
