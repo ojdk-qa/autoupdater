@@ -27,7 +27,7 @@ jobs:
     needs: single-instance
     steps:
       - name: Downgrade git
-        if: false
+        if: true
         run: |
           # workaround for:
           # https://public-inbox.org/git/20200605224342.GF6569@camp.crustytoothpaste.net/t/
@@ -129,7 +129,7 @@ jobs:
     needs: single-instance
     steps:
       - name: Downgrade git
-        if: false
+        if: true
         run: |
           # workaround for:
           # https://public-inbox.org/git/20200605224342.GF6569@camp.crustytoothpaste.net/t/
